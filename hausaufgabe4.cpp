@@ -5,11 +5,18 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<string.h>
 #include <gsl/gsl_integration.h>
 
 #include<vector>
 #include<iostream>
 #include<fstream>
+
+#ifndef M_PI
+#define M_PI           3.14159265358979323846
+#endif
+
+#define FINT int  /* definiere den Standard F-integer auf der Maschine*/
 
 void gausslegendre(double a,double b,double *x,double *w,size_t n)
 { gsl_integration_glfixed_table *xwtable;
