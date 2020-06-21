@@ -1,2 +1,171 @@
-g++: fatal error: no input files
-compilation terminated.
+hausaufgabe4.cpp: In function ‘void GetUserParam(int, char**)’:
+hausaufgabe4.cpp:86:25: error: ‘V0’ was not declared in this scope
+                         V0 = strtod( argv[++i], &endptr);
+                         ^~
+hausaufgabe4.cpp:86:25: note: suggested alternative: ‘y0’
+                         V0 = strtod( argv[++i], &endptr);
+                         ^~
+                         y0
+hausaufgabe4.cpp:97:11: error: ‘mass’ was not declared in this scope
+           mass = strtod( argv[++i], &endptr);
+           ^~~~
+hausaufgabe4.cpp:97:11: note: suggested alternative: ‘labs’
+           mass = strtod( argv[++i], &endptr);
+           ^~~~
+           labs
+hausaufgabe4.cpp:109:25: error: ‘pmax’ was not declared in this scope
+                         pmax = strtod( argv[++i], &endptr);
+                         ^~~~
+hausaufgabe4.cpp:109:25: note: suggested alternative: ‘fmax’
+                         pmax = strtod( argv[++i], &endptr);
+                         ^~~~
+                         fmax
+hausaufgabe4.cpp:122:25: error: ‘np’ was not declared in this scope
+                         np = strtol( argv[++i], &endptr, 10);
+                         ^~
+hausaufgabe4.cpp:133:25: error: ‘maxiter’ was not declared in this scope
+                         maxiter = strtol( argv[++i], &endptr, 10);
+                         ^~~~~~~
+hausaufgabe4.cpp: In function ‘void prepmat()’:
+hausaufgabe4.cpp:159:4: error: ‘pmesh’ was not declared in this scope
+    pmesh=double(malloc(sizeof(double)*np));
+    ^~~~~
+hausaufgabe4.cpp:159:39: error: ‘np’ was not declared in this scope
+    pmesh=double(malloc(sizeof(double)*np));
+                                       ^~
+hausaufgabe4.cpp:160:4: error: ‘wmesh’ was not declared in this scope
+    wmesh=double(malloc(sizeof(double)*np));
+    ^~~~~
+hausaufgabe4.cpp:160:4: note: suggested alternative: ‘wmemset’
+    wmesh=double(malloc(sizeof(double)*np));
+    ^~~~~
+    wmemset
+hausaufgabe4.cpp:161:4: error: ‘Vmesh’ was not declared in this scope
+    Vmesh=double(malloc(sizeof(double)*np*np));
+    ^~~~~
+hausaufgabe4.cpp:162:4: error: ‘psiwf’ was not declared in this scope
+    psiwf=double(malloc(sizeof(double)*np));
+    ^~~~~
+hausaufgabe4.cpp:162:4: note: suggested alternative: ‘sinf’
+    psiwf=double(malloc(sizeof(double)*np));
+    ^~~~~
+    sinf
+hausaufgabe4.cpp:166:18: error: ‘pmax’ was not declared in this scope
+    trapez(np,0.0,pmax,pmesh,wmesh);
+                  ^~~~
+hausaufgabe4.cpp:166:18: note: suggested alternative: ‘fmax’
+    trapez(np,0.0,pmax,pmesh,wmesh);
+                  ^~~~
+                  fmax
+hausaufgabe4.cpp:166:4: error: ‘trapez’ was not declared in this scope
+    trapez(np,0.0,pmax,pmesh,wmesh);
+    ^~~~~~
+hausaufgabe4.cpp:173:16: error: ‘Vpot’ was not declared in this scope
+  Vmesh[i+j*np]=Vpot(pmesh[i],pmesh[j])*pmesh[j]*pmesh[j]*wmesh[j];
+                ^~~~
+hausaufgabe4.cpp:173:16: note: suggested alternative: ‘pow’
+  Vmesh[i+j*np]=Vpot(pmesh[i],pmesh[j])*pmesh[j]*pmesh[j]*wmesh[j];
+                ^~~~
+                pow
+hausaufgabe4.cpp: In function ‘void addvec(double*, double*, double*)’:
+hausaufgabe4.cpp:182:16: error: ‘np’ was not declared in this scope
+     for(i=0; i<np ; i++)
+                ^~
+hausaufgabe4.cpp: In function ‘void multvec(double, double*, double*)’:
+hausaufgabe4.cpp:192:16: error: ‘np’ was not declared in this scope
+     for(i=0; i<np ; i++)
+                ^~
+hausaufgabe4.cpp: In function ‘double skalp(double*, double*)’:
+hausaufgabe4.cpp:204:16: error: ‘np’ was not declared in this scope
+     for(i=0; i<np ; i++)
+                ^~
+hausaufgabe4.cpp:206:26: error: ‘pmesh’ was not declared in this scope
+         sum+=v1[i]*v2[i]*pmesh[i]*pmesh[i]*wmesh[i]; /* summation ueber alle Stuetzstellen */
+                          ^~~~~
+hausaufgabe4.cpp:206:44: error: ‘wmesh’ was not declared in this scope
+         sum+=v1[i]*v2[i]*pmesh[i]*pmesh[i]*wmesh[i]; /* summation ueber alle Stuetzstellen */
+                                            ^~~~~
+hausaufgabe4.cpp:206:44: note: suggested alternative: ‘wmemset’
+         sum+=v1[i]*v2[i]*pmesh[i]*pmesh[i]*wmesh[i]; /* summation ueber alle Stuetzstellen */
+                                            ^~~~~
+                                            wmemset
+hausaufgabe4.cpp: In function ‘void applymat(double*, double*, double)’:
+hausaufgabe4.cpp:216:16: error: ‘np’ was not declared in this scope
+     for(i=0; i<np; i++)
+                ^~
+hausaufgabe4.cpp:219:18: error: ‘mass’ was not declared in this scope
+        Efakt=2.0*mass/(2*mass*E-pmesh[i]*pmesh[i]);
+                  ^~~~
+hausaufgabe4.cpp:219:18: note: suggested alternative: ‘labs’
+        Efakt=2.0*mass/(2*mass*E-pmesh[i]*pmesh[i]);
+                  ^~~~
+                  labs
+hausaufgabe4.cpp:219:33: error: ‘pmesh’ was not declared in this scope
+        Efakt=2.0*mass/(2*mass*E-pmesh[i]*pmesh[i]);
+                                 ^~~~~
+hausaufgabe4.cpp:223:21: error: ‘Vmesh’ was not declared in this scope
+    psiout[i]+=Efakt*Vmesh[i+np*j]*psiin[j];
+                     ^~~~~
+hausaufgabe4.cpp: In function ‘double lambda(double)’:
+hausaufgabe4.cpp:247:14: error: ‘maxiter’ was not declared in this scope
+     FINT lda=maxiter+1,ldvl=maxiter+1,ldvr=maxiter+1;   /* Dimension der Felder */
+              ^~~~~~~
+hausaufgabe4.cpp:254:47: error: invalid cast from type ‘void*’ to type ‘double’
+     amat=double(malloc(sizeof(double)*dim*dim));
+                                               ^
+hausaufgabe4.cpp:255:40: error: ‘np’ was not declared in this scope
+     v=double(malloc(sizeof(double)*dim*np));
+                                        ^~
+hausaufgabe4.cpp:259:41: error: invalid cast from type ‘void*’ to type ‘double’
+     WR=double(malloc(sizeof(double)*dim));
+                                         ^
+hausaufgabe4.cpp:260:41: error: invalid cast from type ‘void*’ to type ‘double’
+     WI=double(malloc(sizeof(double)*dim));
+                                         ^
+hausaufgabe4.cpp:261:45: error: invalid cast from type ‘void*’ to type ‘double’
+     work=double(malloc(sizeof(double)*4*dim));
+                                             ^
+hausaufgabe4.cpp:262:40: error: invalid cast from type ‘void*’ to type ‘double’
+     c=double(malloc(sizeof(double)*dim));
+                                        ^
+hausaufgabe4.cpp:263:45: error: invalid cast from type ‘void*’ to type ‘double’
+     VR=double(malloc(sizeof(double)*dim*dim));
+                                             ^
+hausaufgabe4.cpp:264:45: error: invalid cast from type ‘void*’ to type ‘double’
+     VL=double(malloc(sizeof(double)*dim*dim));
+                                             ^
+hausaufgabe4.cpp:315:51: error: ‘ldvl’ was not declared in this scope
+     dgeev_(&jobvl,&jobvr,&dim,amat,&lda,WR,WI,VL,&ldvl,VR,&ldvr,work,&lwork,&info);
+                                                   ^~~~
+hausaufgabe4.cpp:315:51: note: suggested alternative: ‘lda’
+     dgeev_(&jobvl,&jobvr,&dim,amat,&lda,WR,WI,VL,&ldvl,VR,&ldvr,work,&lwork,&info);
+                                                   ^~~~
+                                                   lda
+hausaufgabe4.cpp:315:60: error: ‘ldvr’ was not declared in this scope
+     dgeev_(&jobvl,&jobvr,&dim,amat,&lda,WR,WI,VL,&ldvl,VR,&ldvr,work,&lwork,&info);
+                                                            ^~~~
+hausaufgabe4.cpp:315:60: note: suggested alternative: ‘lda’
+     dgeev_(&jobvl,&jobvr,&dim,amat,&lda,WR,WI,VL,&ldvl,VR,&ldvr,work,&lwork,&info);
+                                                            ^~~~
+                                                            lda
+hausaufgabe4.cpp: At global scope:
+hausaufgabe4.cpp:366:30: error: expected identifier before ‘)’ token
+ double maxreldiff (double x, ) {
+                              ^
+hausaufgabe4.cpp: In function ‘void perform_4()’:
+hausaufgabe4.cpp:379:5: error: ‘x’ was not declared in this scope
+     x = double(malloc(sizeof(double)*n));
+     ^
+hausaufgabe4.cpp:379:40: error: invalid cast from type ‘void*’ to type ‘double’
+     x = double(malloc(sizeof(double)*n));
+                                        ^
+hausaufgabe4.cpp:380:5: error: ‘w’ was not declared in this scope
+     w = double(malloc(sizeof(double)*n));
+     ^
+hausaufgabe4.cpp:380:40: error: invalid cast from type ‘void*’ to type ‘double’
+     w = double(malloc(sizeof(double)*n));
+                                        ^
+hausaufgabe4.cpp: In function ‘int main()’:
+hausaufgabe4.cpp:410:1: error: expected ‘;’ before ‘}’ token
+ }
+ ^
