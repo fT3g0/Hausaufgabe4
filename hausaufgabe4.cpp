@@ -18,6 +18,13 @@
 
 #define FINT int  /* definiere den Standard F-integer auf der Maschine*/
 
+int np=400;                /* Anzahl der Impulsgitterpunkte */
+double pmax=200.0;       /* Maximaler Impuls  beruecksichtigt in MeV */
+double V0=400; /* Staerke Parameter des Potentials (dimensionslos) */
+double mu=1;    /* Reichweite Parameter des Potential in MeV */
+double mass=1;       /* reduzierte Masse des Systems in MeV */
+int maxiter=5;            /* maximal Anzahl der Iterationen */
+
 void gausslegendre(double a,double b,double *x,double *w,size_t n)
 { gsl_integration_glfixed_table *xwtable;
 size_t i;
@@ -40,12 +47,12 @@ extern void dgeev_(char *jobvl,char *jobvr,FINT *n,double *a,FINT *lda,
                    double *work,FINT *lwork,FINT *info);
 
 double secant(double x1, double x2, double (*func)(double), int *schritt)
-/* x1,x2     Startwerte
+{
+    /* x1,x2     Startwerte
    func      ist die "Referenz" auf eine Funktion mit einem double Parameter,
              die double zurueckgibt (Referenz = Adresse der Funktion)
    schritt   ist auch Referenz: Veraenderungen an der Variable wirken sich auf
                                 das aufrufende Programm aus !!! */
-{
   const double tol=1e-12; /* geforderte Genauigkeit als Konstante */
   double xn;              /* neuer Schaetzwert */
 
@@ -64,91 +71,91 @@ double secant(double x1, double x2, double (*func)(double), int *schritt)
   return xn;   /* Gebe Nullstelle zurueck */
 }
 
-void GetUserParam( int argc, char *argv[] ){
-
-/* Variablen: */
-  int i,j;
-    char* endptr;
-    const char* usage =
-        "mombound [-n <np> -V <V0> -p <pmax> -u <mu> -m <maxiter> -M <mass>]";
-    const char* error_message =
-        "# FEHLER(GetuserParam): falsche Option: ";
-
-    if (argc>1) { /* falls es ueberhaupt Parameter gibt ... */
-        for (i=1; i<argc; i++){
-            /* parameter 2 Charakter lang und sollte mit '-' anfaengen ... */
-            if ( (strlen(argv[i])==2) && (argv[i][0] == '-') ) {
-                switch (argv[i][1]) {
-                    case 'V': /* falls dies 'V' ist ... */
-                        /* konvertiere das naechste (++i!) "String"-Argument
-                           nach "double" und weise es der globalen
-                           "double" Variable "V0" zu */
-                        V0 = strtod( argv[++i], &endptr);
-                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
-                            /* sollte mit Leerzeichen abgeschlossen sein */
-                            printf(" %s \n %s \n",error_message,usage);
-                            exit(1);
-                        }
-                        break;
-                    case 'M': /* falls dies 'M' ist ... */
-                        /* konvertiere das naechste (++i!) "String"-Argument
-                           nach "double" und weise es der globalen
-                           "double" Variable "mass" zu */
-		        mass = strtod( argv[++i], &endptr);
-                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
-                            /* sollte mit Leerzeichen abgeschlossen sein */
-                            printf(" %s \n %s \n",error_message,usage);
-                            exit(1);
-                        }
-                        break;
-
-                    case 'p': /* falls dies 'p' ist ... */
-                        /* konvertiere das naechste (++i!) "String"-Argument
-                           nach "double" und weise es der globalen
-                           "double" Variable "pmax" zu */
-                        pmax = strtod( argv[++i], &endptr);
-                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
-                            /* sollte mit Leerzeichen abgeschlossen sein */
-                            printf(" %s \n %s \n",error_message,usage);
-                            exit(1);
-                        }
-                        break;
-
-                    case 'n':
-                        /* konvertiere das naechste (++i!) "String"-Argument
-                           nach "int" und weise es der globalen
-                           "int" Variable "np" zu;
-                           Basis der Konversion ist dezimal (10) */
-                        np = strtol( argv[++i], &endptr, 10);
-                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
-                            printf(" %s \n %s \n",error_message,usage);
-                            exit(1);
-                        }
-                        break;
-                    case 'm':
-                        /* konvertiere das naechste (++i!) "String"-Argument
-                           nach "int" und weise es der globalen
-                           "int" Variable "maxiter" zu;
-                           Basis der Konversion ist dezimal (10) */
-                        maxiter = strtol( argv[++i], &endptr, 10);
-                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
-                            printf(" %s \n %s \n",error_message,usage);
-                            exit(1);
-                        }
-                        break;
-
-                    default:
-                        printf(" %s \n %s \n",error_message,usage);
-                        exit(1);
-                }
-            } else {
-	        printf(" %s \n %s \n",error_message,usage);
-                exit(1);
-            } /* end of: if-then-else */
-        } /* end-of: for */
-    } /* end-of: if */
-
-}
+//void GetUserParam( int argc, char *argv[] ){
+//
+// /* Variablen: */
+//  int i,j;
+//    char* endptr;
+//    const char* usage =
+//        "mombound [-n <np> -V <V0> -p <pmax> -u <mu> -m <maxiter> -M <mass>]";
+//    const char* error_message =
+//        "# FEHLER(GetuserParam): falsche Option: ";
+//
+//    if (argc>1) { /* falls es ueberhaupt Parameter gibt ... */
+//        for (i=1; i<argc; i++){
+//            /* parameter 2 Charakter lang und sollte mit '-' anfaengen ... */
+//            if ( (strlen(argv[i])==2) && (argv[i][0] == '-') ) {
+//                switch (argv[i][1]) {
+//                    case 'V': /* falls dies 'V' ist ... */
+//                        /* konvertiere das naechste (++i!) "String"-Argument
+//                           nach "double" und weise es der globalen
+//                           "double" Variable "V0" zu */
+//                        V0 = strtod( argv[++i], &endptr);
+//                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
+//                            /* sollte mit Leerzeichen abgeschlossen sein */
+//                            printf(" %s \n %s \n",error_message,usage);
+//                            exit(1);
+//                        }
+//                        break;
+//                    case 'M': /* falls dies 'M' ist ... */
+//                        /* konvertiere das naechste (++i!) "String"-Argument
+//                           nach "double" und weise es der globalen
+//                           "double" Variable "mass" zu */
+//		        mass = strtod( argv[++i], &endptr);
+//                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
+//                            /* sollte mit Leerzeichen abgeschlossen sein */
+//                            printf(" %s \n %s \n",error_message,usage);
+//                            exit(1);
+//                        }
+//                        break;
+//
+//                    case 'p': /* falls dies 'p' ist ... */
+//                        /* konvertiere das naechste (++i!) "String"-Argument
+//                           nach "double" und weise es der globalen
+//                           "double" Variable "pmax" zu */
+//                        pmax = strtod( argv[++i], &endptr);
+//                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
+//                            /* sollte mit Leerzeichen abgeschlossen sein */
+//                            printf(" %s \n %s \n",error_message,usage);
+//                            exit(1);
+//                        }
+//                        break;
+//
+//                    case 'n':
+//                        /* konvertiere das naechste (++i!) "String"-Argument
+//                           nach "int" und weise es der globalen
+//                           "int" Variable "np" zu;
+//                           Basis der Konversion ist dezimal (10) */
+//                        np = strtol( argv[++i], &endptr, 10);
+//                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
+//                            printf(" %s \n %s \n",error_message,usage);
+//                            exit(1);
+//                        }
+//                        break;
+//                    case 'm':
+//                        /* konvertiere das naechste (++i!) "String"-Argument
+//                           nach "int" und weise es der globalen
+//                           "int" Variable "maxiter" zu;
+//                           Basis der Konversion ist dezimal (10) */
+//                        maxiter = strtol( argv[++i], &endptr, 10);
+//                        if ( (!isspace(*endptr) && (*endptr) != 0) ) {
+//                            printf(" %s \n %s \n",error_message,usage);
+//                            exit(1);
+//                        }
+//                        break;
+//
+//                    default:
+//                        printf(" %s \n %s \n",error_message,usage);
+//                        exit(1);
+//                }
+//            } else {
+//	        printf(" %s \n %s \n",error_message,usage);
+//                exit(1);
+//            } /* end of: if-then-else */
+//        } /* end-of: for */
+//    } /* end-of: if */
+//
+//}
 
 void prepmat()   /* Routine benoetigt hier keine Parameter, da diese durch globale Variablen festgelegt werden */
  {
@@ -156,10 +163,10 @@ void prepmat()   /* Routine benoetigt hier keine Parameter, da diese durch globa
 
    /* alloziere Speicher fuer Gitterpunkte, Gewichte und das Potential und die Wellenfunktion */
 
-   pmesh=double(malloc(sizeof(double)*np));
-   wmesh=double(malloc(sizeof(double)*np));
-   Vmesh=double(malloc(sizeof(double)*np*np));
-   psiwf=double(malloc(sizeof(double)*np));
+   double *pmesh=(double*) malloc(sizeof(double)*np);
+   double *wmesh=(double*) malloc(sizeof(double)*np);
+   double *Vmesh=(double*) malloc(sizeof(double)*np*np);
+   double *psiwf=(double*) malloc(sizeof(double)*np);
 
    /* lege die Gitterpunkte hier einfach mit bekannter Trapezroutine fest */
 
@@ -251,17 +258,17 @@ void prepmat()   /* Routine benoetigt hier keine Parameter, da diese durch globa
 				 sollen -> hier berechnen, 'N' heisst nicht berechnen */
     /* alloziere Speicher fuer Matrizen */
 
-    amat=double(malloc(sizeof(double)*dim*dim));
-    v=double(malloc(sizeof(double)*dim*np));
-    wvec=double(malloc(sizeof(double)*np));
-    wtildevec=double(malloc(sizeof(double)*np));
-    vhilf=double(malloc(sizeof(double)*np));
-    WR=double(malloc(sizeof(double)*dim));
-    WI=double(malloc(sizeof(double)*dim));
-    work=double(malloc(sizeof(double)*4*dim));
-    c=double(malloc(sizeof(double)*dim));
-    VR=double(malloc(sizeof(double)*dim*dim));
-    VL=double(malloc(sizeof(double)*dim*dim));
+    amat=(double*)malloc(sizeof(double)*dim*dim);
+    v=(double*)malloc(sizeof(double)*dim*np);
+    wvec=(double*)malloc(sizeof(double)*np);
+    wtildevec=(double*)malloc(sizeof(double)*np);
+    vhilf=(double*)malloc(sizeof(double)*np);
+    WR=(double*)malloc(sizeof(double)*dim);
+    WI=(double*)malloc(sizeof(double)*dim);
+    work=(double*)malloc(sizeof(double)*4*dim);
+    c=(double*)malloc(sizeof(double)*dim);
+    VR=(double*)(malloc(sizeof(double)*dim*dim);
+    VL=(double*)malloc(sizeof(double)*dim*dim);
 
     /* belege amat mit Null */
 
@@ -353,37 +360,76 @@ double f(double x)
 return 0;
 }
 
-double v_my_l0 (double &p, double &p_prime, double &mu, double &intrgral_part)
+double v_mu_l0 (double &p, double &p_prime, double &mu, double &v0)
  {
-    return 0;
+    double integral_part, result;
+    integral_part = gausslegendre();
+    result = 2/M_PI*v0*integral_part;
+    return result;
  }
 
 //berechnet die Funktion analytisch
-double f_analytic (double x) {
+double v_mu_l0_analytic (double &p, double &p_prime, double &mu) {
 return 0;
 }
 
-double maxreldiff (double x, ) {
-double result;
-result = abs(2*(f(x)-f_analytic(x))/(f(x)+f_analytic(x)));
-return result;
+double maxreldiff (double* f1 (double, double, double, double), double *f2 (double, double, double), double &p, double &p_prime, double &mu, double &integral_part, double start, double end, double step, double* iter_var) {
+for (&itervar=start; &itervar<=end; &itervar+=step)
+{
+    double result;
+    result = abs(2*(f1(p, p_prime, mu, integral_part)-f2 (p, p_prime, mu))/(f1(p, p_prime, mu, integral_part)+f2(p, p_prime, mu, integral_part)));
+    return result;
 }
 
-void perform_4() {
+}
+
+void perform_3() {
     //Parameter: a=0, b=200, n=400;
     double a=0;
     double b=200;
     double n=400;
     double result;
+    double *x;
+    double *w;
 
-    x = double(malloc(sizeof(double)*n));
-    w = double(malloc(sizeof(double)*n));
+    x = (double*) malloc(sizeof(double)*n);
+    w = (double*) malloc(sizeof(double)*n);
+
 
     result = gausslegendre(0, 200, x, w, 400);
 
 
     maxreldiff;
 
+}
+
+void perform_4() {
+
+//    int iterations;
+//  double ener;
+//  double timeused;                /* Variabeln zur Zeitmessung */
+//  struct timeval tvstart,tvend;
+//
+//  /* hier zusaetzlich Routine aus time, um Zeit fuer Loesung zu messen */
+//  gettimeofday(&tvstart,NULL);
+//
+//  /* Werte Parameter aus */
+//  GetUserParam(argc,argv);
+//
+//  /* bereite die Anwendung vor */
+//  prepmat();
+//
+//  /* suche Bindungsenergie */
+//  ener=secant(-2.2, -2.0, &func, &iterations);
+//
+//  printf("Energie: %15.6e MeV in %d Iterationen\n",ener,iterations);
+//
+//  /* Wie lange hat das in sec gedauert ? */
+//  gettimeofday(&tvend,NULL);
+//  timeused=tvend.tv_sec-tvstart.tv_sec;
+//  timeused=timeused+(tvend.tv_usec-tvstart.tv_usec)*1e-6;  /* Zeitdifferenz  in sec  */
+//
+//  printf(" \n\n Zeit: %15.6le \n\n",timeused);
 }
 
 void perform_5() {
@@ -400,6 +446,7 @@ void perform_8() {
 
 int main() {
 
+    perform_3;
     perform_4;
     perform_5;
     perform_6;
