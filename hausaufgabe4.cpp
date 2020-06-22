@@ -428,7 +428,7 @@ double v_mu_l0 (double &p, double &p_prime, double n)
  }
 
 //berechnet die Funktion analytisch
-double v_mu_l0_analytic (double &p, double &p_prime, double &mu) {
+double v_mu_l0_analytic (double &p, double &p_prime) {
 
 //Benennung der Hilfsvariablen K, Lplus, Lminus, CalI und CalJ wie in pdf
 
@@ -449,8 +449,14 @@ void perform_3() {
     double a=0;
     double b=200;
     double np=400;
-    double step=(b-a)/np;
+    double step=(b-a)/np;   //Schrittweite für p und p'
     double result;
+    double reldiff;
+    double maxreldiff=0;
+    double p_mrd;       //p dort, wo die maximale relative Differenz erreicht wird
+    double p_prime_mrd; //p_prime, wo die maximale relative Differenz erreicht wird
+    double v_num;
+    double v_ana;
 
     //Loop for n = 10^2, ..., 10^5.
     for(double ny=1e2; ny<=1e5; ny*=10) {
@@ -458,10 +464,19 @@ void perform_3() {
         for(double p=a; p<b; p+=step) {
             //Loop for p'
             for (double p_prime =a; p_prime<b; p+=step) {
-            v_mu_l0(p, p_prime, ny);
+                    //numerischen Wert einspeichern um diese vergleichen zu können
+            v_num = v_mu_l0(p, p_prime, ny);
+            v_ana = v_mu_l0_analytic(p, p_prime);
+            reldiff = abs(2(v_num-v_ana)/(v_num+v_ana)); // berechnet relative Abweichung
+            if (reldiff>maxreldiff) {
+                    maxreldiff=reldiff      //damit am Ende die maximale relative Abweichung in maxreldiff gespeichert ist
+                    p_mrd = p;
+                    p_prime_mrd = p_prime;
+                    }
             }
 
         }
+        std::cout << "Für " << ny << " Stützstellen: max. rel. Abweichung = " << maxreldiff << ", für p = " << p_mrd << "und p' = " << p_prime_mrd << "\n";
     }
 
 }
