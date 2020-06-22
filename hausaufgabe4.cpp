@@ -5,7 +5,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<float.h>
+#include<limits.h>
 #include<string.h>
+#include<ctype.h>
 #include <gsl/gsl_integration.h>
 
 #include<vector>
