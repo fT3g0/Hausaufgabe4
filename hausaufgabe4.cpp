@@ -458,7 +458,7 @@ void perform_3() {
         for(double p=a; p<b; p+=step) {
             //Loop for p'
             for (double p_prime =a; p_prime<b; p+=step) {
-            v_mu_l0(p, p_prime);
+            v_mu_l0(p, p_prime, ny);
             }
 
         }
