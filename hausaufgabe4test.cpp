@@ -532,12 +532,12 @@ void perform_8() {
 int main() {
 
     std::cout << "Main started\n";
-    perform_3;
-    perform_4;
-    perform_5;
-    perform_6;
-    perform_7;
-    perform_8;
+    perform_3();
+    perform_4();
+    perform_5();
+    perform_6();
+    perform_7();
+    perform_8();
 
     return 0;
 }
