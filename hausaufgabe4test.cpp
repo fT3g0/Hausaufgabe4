@@ -531,6 +531,7 @@ void perform_8() {
 
 int main() {
 
+    std::cout << "Main started\n";
     perform_3;
     perform_4;
     perform_5;
