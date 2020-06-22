@@ -453,7 +453,7 @@ void perform_3() {
     double result;
 
     //Loop for n = 10^2, ..., 10^5.
-    for(double ny=1e2, ny<=1e5, ny*=10) {
+    for(double ny=1e2; ny<=1e5; ny*=10) {
         //Loop for p
         for(double p=a; p<b; p+=step) {
             //Loop for p'
