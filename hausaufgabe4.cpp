@@ -401,9 +401,14 @@ return 0;
 
 double v_mu_l0 (double &p, double &p_prime)
  {
-
+    double n=100;
     double integral_part, result;
-    integral_part = gausslegendre(0,10,x,w,100);
+    gausslegendre(0,10,x,w,n);
+    for(int i=0; i<n; i++) {
+     integral_part += x[i]*w[i];
+    }
+
+
     result = 2/M_PI*V0*integral_part;
     return result;
  }
