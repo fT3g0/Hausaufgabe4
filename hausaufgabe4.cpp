@@ -25,6 +25,11 @@ double mu=1;    /* Reichweite Parameter des Potential in MeV */
 double mass=1;       /* reduzierte Masse des Systems in MeV */
 int maxiter=5;            /* maximal Anzahl der Iterationen */
 
+double *x, *w;
+double *pmesh,*wmesh;     /* Zeiger auf das Feld mit Gitterpunkten und Gewichten */
+double *Vmesh;            /* Zeiger auf ein Feld mit den Potentialmatrixelementen */
+double *psiwf;            /* Zeiger auf das Feld mit der letzten berechneten Wellenfunktion */
+
 void gausslegendre(double a,double b,double *x,double *w,size_t n)
 { gsl_integration_glfixed_table *xwtable;
 size_t i;
@@ -69,6 +74,32 @@ double secant(double x1, double x2, double (*func)(double), int *schritt)
   while(fabs(x2-x1)>tol);   /* solange Genauigkeitsziel nicht erreicht */
 
   return xn;   /* Gebe Nullstelle zurueck */
+}
+
+void trapez(int n, double a, double b, double *xp, double *wp)
+/* n legt die Anzahl der Stuetzstellen fest.
+   a,b sind "normale" double Parameter
+   xp und wp sind Zeiger(Pointer) auf ein double Feld,
+   es wird die Adresse des Feldes gespeichert !!!  */
+{
+  int i;
+  double h;
+
+  h=(b-a)/(double)(n-1);    /* Berechne Schrittweite */
+
+  for(i=1;i<n-1;i++)
+    {
+      xp[i]=a+i*h;      /* xp = Anfangsadresse des Feldes */
+      wp[i]=h;          /* xp[i] = Nehme die Speicherstelle, */
+                        /*      die i Speicherstellen weiter liegt */
+    }
+
+  xp[0]=a;          /* Lege Punkte und Gewichte am Rand fest */
+  wp[0]=h/2.0;
+
+  xp[n-1]=b;
+  wp[n-1]=h/2.0;
+
 }
 
 //void GetUserParam( int argc, char *argv[] ){
@@ -156,6 +187,14 @@ double secant(double x1, double x2, double (*func)(double), int *schritt)
 //    } /* end-of: if */
 //
 //}
+
+double Vpot(double p, double pp)
+  {
+    if(p==0.0) p=1e-5;   /* Potential ist nicht definiert fuer p=0 aber */
+    if(pp==0.0) pp=1e-5; /* stetig fortgesetzt werden */
+
+    return 2.0*V0/(M_PI*4*p*pp)*log(((p+pp)*(p+pp)+mu*mu)/((p-pp)*(p-pp)+mu*mu));
+  }
 
 void prepmat()   /* Routine benoetigt hier keine Parameter, da diese durch globale Variablen festgelegt werden */
  {
@@ -267,7 +306,7 @@ void prepmat()   /* Routine benoetigt hier keine Parameter, da diese durch globa
     WI=(double*)malloc(sizeof(double)*dim);
     work=(double*)malloc(sizeof(double)*4*dim);
     c=(double*)malloc(sizeof(double)*dim);
-    VR=(double*)(malloc(sizeof(double)*dim*dim);
+    VR=(double*)malloc(sizeof(double)*dim*dim);
     VL=(double*)malloc(sizeof(double)*dim*dim);
 
     /* belege amat mit Null */
@@ -360,10 +399,11 @@ double f(double x)
 return 0;
 }
 
-double v_mu_l0 (double &p, double &p_prime, double &mu, double &v0)
+double v_mu_l0 (double &p, double &p_prime)
  {
+
     double integral_part, result;
-    integral_part = gausslegendre();
+    integral_part = gausslegendre(0,10,x,w,100);
     result = 2/M_PI*v0*integral_part;
     return result;
  }
@@ -373,30 +413,20 @@ double v_mu_l0_analytic (double &p, double &p_prime, double &mu) {
 return 0;
 }
 
-double maxreldiff (double* f1 (double, double, double, double), double *f2 (double, double, double), double &p, double &p_prime, double &mu, double &integral_part, double start, double end, double step, double* iter_var) {
-for (&itervar=start; &itervar<=end; &itervar+=step)
-{
-    double result;
-    result = abs(2*(f1(p, p_prime, mu, integral_part)-f2 (p, p_prime, mu))/(f1(p, p_prime, mu, integral_part)+f2(p, p_prime, mu, integral_part)));
-    return result;
-}
-
-}
-
 void perform_3() {
     //Parameter: a=0, b=200, n=400;
     double a=0;
     double b=200;
     double n=400;
+    double step=(b-a)/n;
     double result;
-    double *x;
-    double *w;
 
-    x = (double*) malloc(sizeof(double)*n);
-    w = (double*) malloc(sizeof(double)*n);
+    for(int p=a; p<b; p+=step) {
+        for (p_prime =a; p_prime<b; p+=step) {
+            v_mu_l0(p, p_prime);
+        }
 
-
-    result = gausslegendre(0, 200, x, w, 400);
+    }
 
 
     maxreldiff;
