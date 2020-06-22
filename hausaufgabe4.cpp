@@ -190,251 +190,278 @@ void trapez(int n, double a, double b, double *xp, double *wp)
 //    } /* end-of: if */
 //
 //}
+//
+//double Vpot(double p, double pp)
+//  {
+//    if(p==0.0) p=1e-5;   /* Potential ist nicht definiert fuer p=0 aber */
+//    if(pp==0.0) pp=1e-5; /* stetig fortgesetzt werden */
+//
+//    return 2.0*V0/(M_PI*4*p*pp)*log(((p+pp)*(p+pp)+mu*mu)/((p-pp)*(p-pp)+mu*mu));
+//  }
+//
+//void prepmat()   /* Routine benoetigt hier keine Parameter, da diese durch globale Variablen festgelegt werden */
+// {
+//   int i,j;      /* fuer Schleifen ueber Gitterpunkte */
+//
+//   /* alloziere Speicher fuer Gitterpunkte, Gewichte und das Potential und die Wellenfunktion */
+//
+//   double *pmesh=(double*) malloc(sizeof(double)*np);
+//   double *wmesh=(double*) malloc(sizeof(double)*np);
+//   double *Vmesh=(double*) malloc(sizeof(double)*np*np);
+//   double *psiwf=(double*) malloc(sizeof(double)*np);
+//
+//   /* lege die Gitterpunkte hier einfach mit bekannter Trapezroutine fest */
+//
+//   trapez(np,0.0,pmax,pmesh,wmesh);
+//
+//   /* bestimme Potential an den Stuetzstellen und multipliziere mit Energieunabhaengigen Faktor*/
+//
+//   for(i=0; i<np; i++)
+//    for(j=0; j<np; j++)
+//      {
+//	Vmesh[i+j*np]=Vpot(pmesh[i],pmesh[j])*pmesh[j]*pmesh[j]*wmesh[j];
+//      }
+//
+// }
+//
+// void addvec(double *v1,double *v2, double *vout)
+//  {
+//    int i; /* fuer Schleife */
+//
+//    for(i=0; i<np ; i++)
+//      {
+//        vout[i]=v1[i]+v2[i]; /* komponentenweise Addition */
+//      }
+//  }
+//
+//  void multvec(double a,double *vin, double *vout)
+//  {
+//    int i; /* fuer Schleife */
+//
+//    for(i=0; i<np ; i++)
+//      {
+//        vout[i]=a*vin[i];      /* komponentenweise Multiplikation */
+//      }
+//  }
+//
+//  double skalp(double *v1,double *v2)
+//  {
+//    int i;       /* fuer Schleife */
+//    double sum;  /* Zwischenergebniss Summation */
+//
+//    sum=0.0;
+//    for(i=0; i<np ; i++)
+//      {
+//        sum+=v1[i]*v2[i]*pmesh[i]*pmesh[i]*wmesh[i]; /* summation ueber alle Stuetzstellen */
+//      }
+//    return sum;
+//  }
+//
+//  void applymat(double *psiin,double *psiout,double E)
+//  {
+//    int i,j;      /* fuer Schleifen ueber Gitterpunkte */
+//    double Efakt; /* Variabel fuer energieabhaengigen Faktor */
+//
+//    for(i=0; i<np; i++)
+//      {
+//       psiout[i]=0.0;
+//       Efakt=2.0*mass/(2*mass*E-pmesh[i]*pmesh[i]);
+//
+//       for(j=0; j<np; j++)
+//        {
+//	  psiout[i]+=Efakt*Vmesh[i+np*j]*psiin[j];
+//
+//        }
+//      }
+//
+//  }
+//
+//  double lambda(double E)
+//  {
+//    int i,j,k;
+//    double *amat;       /* fuer das Feld A_ij */
+//    double norm,prod;   /* fuer skalare Zwichenergebnisse */
+//    double *v;          /* Feld mit Basis-Vektoren */
+//    double *wvec;       /* Vektor w_{j+1} */
+//    double *wtildevec;  /* Vektor wtilde_{j+1} */
+//    double *vhilf;      /* Hilfsvektor fuer Zwischenergebnis */
+//    double *VL,*VR;     /* Speicher Problems */
+//    double *c;          /* Eigenvektor des reduzierten Problems */
+//    double *WR,*WI;     /* Felder fuer Real- und Imaginaerteil der Eigenwerte */
+//    double *work;       /* Hilfsfeld, kann uns egal sein was dort gespeichert wird */
+//    double maxlambda;   /* fuer den maximalen Eigenwert */
+//
+//    /* INTEGER Variabel in FORTRAN = long = 4 Bytes */
+//    FINT info;       /* info sollte Null sein beim Verlassen der Routine, sonst Fehler */
+//    FINT lda=maxiter+1,ldvl=maxiter+1,ldvr=maxiter+1;   /* Dimension der Felder */
+//    FINT lwork=4*(maxiter+1);   /* Dimension des work-Felder (sollte mind. 4*dim sein)*/
+//    FINT dim=maxiter+1;         /* Dimension des reduzierten Problems */
+//    char jobvl='N',jobvr='V';   /* char Variabeln bestimmen, ob VR und VL berechnet werden
+//				 sollen -> hier berechnen, 'N' heisst nicht berechnen */
+//    /* alloziere Speicher fuer Matrizen */
+//
+//    amat=(double*)malloc(sizeof(double)*dim*dim);
+//    v=(double*)malloc(sizeof(double)*dim*np);
+//    wvec=(double*)malloc(sizeof(double)*np);
+//    wtildevec=(double*)malloc(sizeof(double)*np);
+//    vhilf=(double*)malloc(sizeof(double)*np);
+//    WR=(double*)malloc(sizeof(double)*dim);
+//    WI=(double*)malloc(sizeof(double)*dim);
+//    work=(double*)malloc(sizeof(double)*4*dim);
+//    c=(double*)malloc(sizeof(double)*dim);
+//    VR=(double*)malloc(sizeof(double)*dim*dim);
+//    VL=(double*)malloc(sizeof(double)*dim*dim);
+//
+//    /* belege amat mit Null */
+//
+//
+//    for(i=0; i<(maxiter+1)*(maxiter+1); i++)
+//      {
+//	amat[i]=0.0;
+//      }
+//
+//    /* setze Startvektor auf konstant 1 und normiere */
+//
+//    for(i=0; i<np; i++)
+//      {
+//	v[i+0*np]=1.0;
+//      }
+//
+//    norm=sqrt(skalp(&v[0*np],&v[0*np])); /* Bestimme Norm^-1 */
+//    multvec(1.0/norm,&v[0*np],&v[0*np]);         /* multipliziere mit norm^-1 */
+//
+//    /* Iteriere hier immer bis zur maximalen Iteration
+//       moegliche Verbesserung: teste auf Konvergenz und iteriere weniger falls moeglich */
+//
+//    for(k=0; k<maxiter; k++)
+//      {
+//	applymat(&v[k*np],wvec,E);              /* w=A*v[k] */
+//
+//	/* Gram-Schmidt Orthogonalisierung */
+//	multvec(1.0,wvec,wtildevec);            /* wtilde=wvec */
+//
+//
+//        for(j=0; j<=k; j++)
+//	  {
+//	    prod=skalp(&v[np*j],wvec);          /* prod = (v[j],w) */
+//
+//	    amat[j+dim*k]=prod;                  /* Zwischenergebnis: A[j,k] = <v[j] | A | v[k] > */
+//	    multvec(-prod,&v[np*j],vhilf);      /* wtilde=wtilde-v[j]*(v[j],w) */
+//	    addvec(wtildevec,vhilf,wtildevec);
+//	  }
+//
+//	amat[k+1+dim*k]=sqrt(skalp(wtildevec,wtildevec)); /* wegen skalierung die folgt, A[k+1,k]= sqrt(<wtilde,wtilde>) */
+//        norm=1.0/amat[k+1+dim*k];                     /* Bestimme Norm^-1 */
+//        multvec(norm,wtildevec,&v[(k+1)*np]);            /* v[k+1] = wtilde / |wtilde| */
+//      }
+//
+//    /* hier ist Matrix A bestimmt */
+//    /* Eigenwerte koenne beispielsweise mit DGEEV bestimmt werden */
+//
+//
+//    dim--;  /* Achtung letzte Iteration erzeugt nur A[maxiter,maxiter-1] aber kein Element der Spalte A[*,maxiter] */
+//            /* deswegen dimension niedriger waehlen als Speicher (LDxx != N !!!!) */
+//    dgeev_(&jobvl,&jobvr,&dim,amat,&lda,WR,WI,VL,&ldvl,VR,&ldvr,work,&lwork,&info);
+//
+//
+//    maxlambda=0.0;	   /* sehr einfach Maximumsuche, beachtet nur reelle Eigenwerte */
+//    for(i=0; i<dim; i++)
+//      {
+//	if(abs(WI[i])<1e-6) maxlambda=fmax(maxlambda,WR[i]);
+//      }
+//
+//
+//    /* Test ob Erfolgreich */
+//    if(info != 0)
+//      {
+//	printf("Info: %d \n",info);
+//	abort();
+//      }
+//
+//
+//
+//    /* Speicher wieder freigeben */
+//
+//    free(amat);
+//    free(v);
+//    free(wvec);
+//    free(wtildevec);
+//    free(vhilf);
+//    free(WR);
+//    free(WI);
+//    free(work);
+//    free(c);
+//    free(VL);
+//    free(VR);
+//
+//    return maxlambda;
+//  }
 
-double Vpot(double p, double pp)
-  {
-    if(p==0.0) p=1e-5;   /* Potential ist nicht definiert fuer p=0 aber */
-    if(pp==0.0) pp=1e-5; /* stetig fortgesetzt werden */
-
-    return 2.0*V0/(M_PI*4*p*pp)*log(((p+pp)*(p+pp)+mu*mu)/((p-pp)*(p-pp)+mu*mu));
-  }
-
-void prepmat()   /* Routine benoetigt hier keine Parameter, da diese durch globale Variablen festgelegt werden */
- {
-   int i,j;      /* fuer Schleifen ueber Gitterpunkte */
-
-   /* alloziere Speicher fuer Gitterpunkte, Gewichte und das Potential und die Wellenfunktion */
-
-   double *pmesh=(double*) malloc(sizeof(double)*np);
-   double *wmesh=(double*) malloc(sizeof(double)*np);
-   double *Vmesh=(double*) malloc(sizeof(double)*np*np);
-   double *psiwf=(double*) malloc(sizeof(double)*np);
-
-   /* lege die Gitterpunkte hier einfach mit bekannter Trapezroutine fest */
-
-   trapez(np,0.0,pmax,pmesh,wmesh);
-
-   /* bestimme Potential an den Stuetzstellen und multipliziere mit Energieunabhaengigen Faktor*/
-
-   for(i=0; i<np; i++)
-    for(j=0; j<np; j++)
-      {
-	Vmesh[i+j*np]=Vpot(pmesh[i],pmesh[j])*pmesh[j]*pmesh[j]*wmesh[j];
-      }
-
- }
-
- void addvec(double *v1,double *v2, double *vout)
-  {
-    int i; /* fuer Schleife */
-
-    for(i=0; i<np ; i++)
-      {
-        vout[i]=v1[i]+v2[i]; /* komponentenweise Addition */
-      }
-  }
-
-  void multvec(double a,double *vin, double *vout)
-  {
-    int i; /* fuer Schleife */
-
-    for(i=0; i<np ; i++)
-      {
-        vout[i]=a*vin[i];      /* komponentenweise Multiplikation */
-      }
-  }
-
-  double skalp(double *v1,double *v2)
-  {
-    int i;       /* fuer Schleife */
-    double sum;  /* Zwischenergebniss Summation */
-
-    sum=0.0;
-    for(i=0; i<np ; i++)
-      {
-        sum+=v1[i]*v2[i]*pmesh[i]*pmesh[i]*wmesh[i]; /* summation ueber alle Stuetzstellen */
-      }
-    return sum;
-  }
-
-  void applymat(double *psiin,double *psiout,double E)
-  {
-    int i,j;      /* fuer Schleifen ueber Gitterpunkte */
-    double Efakt; /* Variabel fuer energieabhaengigen Faktor */
-
-    for(i=0; i<np; i++)
-      {
-       psiout[i]=0.0;
-       Efakt=2.0*mass/(2*mass*E-pmesh[i]*pmesh[i]);
-
-       for(j=0; j<np; j++)
-        {
-	  psiout[i]+=Efakt*Vmesh[i+np*j]*psiin[j];
-
-        }
-      }
-
-  }
-
-  double lambda(double E)
-  {
-    int i,j,k;
-    double *amat;       /* fuer das Feld A_ij */
-    double norm,prod;   /* fuer skalare Zwichenergebnisse */
-    double *v;          /* Feld mit Basis-Vektoren */
-    double *wvec;       /* Vektor w_{j+1} */
-    double *wtildevec;  /* Vektor wtilde_{j+1} */
-    double *vhilf;      /* Hilfsvektor fuer Zwischenergebnis */
-    double *VL,*VR;     /* Speicher Problems */
-    double *c;          /* Eigenvektor des reduzierten Problems */
-    double *WR,*WI;     /* Felder fuer Real- und Imaginaerteil der Eigenwerte */
-    double *work;       /* Hilfsfeld, kann uns egal sein was dort gespeichert wird */
-    double maxlambda;   /* fuer den maximalen Eigenwert */
-
-    /* INTEGER Variabel in FORTRAN = long = 4 Bytes */
-    FINT info;       /* info sollte Null sein beim Verlassen der Routine, sonst Fehler */
-    FINT lda=maxiter+1,ldvl=maxiter+1,ldvr=maxiter+1;   /* Dimension der Felder */
-    FINT lwork=4*(maxiter+1);   /* Dimension des work-Felder (sollte mind. 4*dim sein)*/
-    FINT dim=maxiter+1;         /* Dimension des reduzierten Problems */
-    char jobvl='N',jobvr='V';   /* char Variabeln bestimmen, ob VR und VL berechnet werden
-				 sollen -> hier berechnen, 'N' heisst nicht berechnen */
-    /* alloziere Speicher fuer Matrizen */
-
-    amat=(double*)malloc(sizeof(double)*dim*dim);
-    v=(double*)malloc(sizeof(double)*dim*np);
-    wvec=(double*)malloc(sizeof(double)*np);
-    wtildevec=(double*)malloc(sizeof(double)*np);
-    vhilf=(double*)malloc(sizeof(double)*np);
-    WR=(double*)malloc(sizeof(double)*dim);
-    WI=(double*)malloc(sizeof(double)*dim);
-    work=(double*)malloc(sizeof(double)*4*dim);
-    c=(double*)malloc(sizeof(double)*dim);
-    VR=(double*)malloc(sizeof(double)*dim*dim);
-    VL=(double*)malloc(sizeof(double)*dim*dim);
-
-    /* belege amat mit Null */
-
-
-    for(i=0; i<(maxiter+1)*(maxiter+1); i++)
-      {
-	amat[i]=0.0;
-      }
-
-    /* setze Startvektor auf konstant 1 und normiere */
-
-    for(i=0; i<np; i++)
-      {
-	v[i+0*np]=1.0;
-      }
-
-    norm=sqrt(skalp(&v[0*np],&v[0*np])); /* Bestimme Norm^-1 */
-    multvec(1.0/norm,&v[0*np],&v[0*np]);         /* multipliziere mit norm^-1 */
-
-    /* Iteriere hier immer bis zur maximalen Iteration
-       moegliche Verbesserung: teste auf Konvergenz und iteriere weniger falls moeglich */
-
-    for(k=0; k<maxiter; k++)
-      {
-	applymat(&v[k*np],wvec,E);              /* w=A*v[k] */
-
-	/* Gram-Schmidt Orthogonalisierung */
-	multvec(1.0,wvec,wtildevec);            /* wtilde=wvec */
-
-
-        for(j=0; j<=k; j++)
-	  {
-	    prod=skalp(&v[np*j],wvec);          /* prod = (v[j],w) */
-
-	    amat[j+dim*k]=prod;                  /* Zwischenergebnis: A[j,k] = <v[j] | A | v[k] > */
-	    multvec(-prod,&v[np*j],vhilf);      /* wtilde=wtilde-v[j]*(v[j],w) */
-	    addvec(wtildevec,vhilf,wtildevec);
-	  }
-
-	amat[k+1+dim*k]=sqrt(skalp(wtildevec,wtildevec)); /* wegen skalierung die folgt, A[k+1,k]= sqrt(<wtilde,wtilde>) */
-        norm=1.0/amat[k+1+dim*k];                     /* Bestimme Norm^-1 */
-        multvec(norm,wtildevec,&v[(k+1)*np]);            /* v[k+1] = wtilde / |wtilde| */
-      }
-
-    /* hier ist Matrix A bestimmt */
-    /* Eigenwerte koenne beispielsweise mit DGEEV bestimmt werden */
-
-
-    dim--;  /* Achtung letzte Iteration erzeugt nur A[maxiter,maxiter-1] aber kein Element der Spalte A[*,maxiter] */
-            /* deswegen dimension niedriger waehlen als Speicher (LDxx != N !!!!) */
-    dgeev_(&jobvl,&jobvr,&dim,amat,&lda,WR,WI,VL,&ldvl,VR,&ldvr,work,&lwork,&info);
-
-
-    maxlambda=0.0;	   /* sehr einfach Maximumsuche, beachtet nur reelle Eigenwerte */
-    for(i=0; i<dim; i++)
-      {
-	if(abs(WI[i])<1e-6) maxlambda=fmax(maxlambda,WR[i]);
-      }
-
-
-    /* Test ob Erfolgreich */
-    if(info != 0)
-      {
-	printf("Info: %d \n",info);
-	abort();
-      }
-
-
-
-    /* Speicher wieder freigeben */
-
-    free(amat);
-    free(v);
-    free(wvec);
-    free(wtildevec);
-    free(vhilf);
-    free(WR);
-    free(WI);
-    free(work);
-    free(c);
-    free(VL);
-    free(VR);
-
-    return maxlambda;
-  }
-
-double f(double x)
-{
-return 0;
+double evaluate_integral_part (double &p, double &p_prime, double y) {
+    double result;
+    result = exp(-mu*y)*((1/y*y)+(2/y))*sin(p*y)*sin(p_prime*y);
+    return result;
 }
 
-double v_mu_l0 (double &p, double &p_prime)
+double v_mu_l0 (double &p, double &p_prime, double n)
  {
-    double n=100;
+    //n: Anzahl der Stützstellen
+
     double integral_part, result;
+
+    x = (double *)malloc(sizeof(double)*n);
+    w = (double *)malloc(sizeof(double)*n);
+
+    //berechnet x-Werte und Gewichte der Stützstellen
     gausslegendre(0,10,x,w,n);
     for(int i=0; i<n; i++) {
-     integral_part += x[i]*w[i];
+
+
+     integral_part += evaluate_integral_part(p,p_prime,x[i])*w[i];
     }
 
+    free(x);
+    free(w);
 
-    result = 2/M_PI*V0*integral_part;
+    result = 2*V0/M_PI/p/p_prime*integral_part;
     return result;
  }
 
 //berechnet die Funktion analytisch
-double v_mu_l0_analytic (double &p, double &p_prime, double &mu) {
-return 0;
+double v_mu_l0_analytic (double &p, double &p_prime, double &mu)
+
+//Benennung der Hilfsvariablen K, Lplus, Lminus, CalI und CalJ wie in pdf
+
+double Lplus, Lminus, K, CalI, CalJ, result;
+
+Lplus = p*p+p_prime*p_prime+p*p_prime;
+Lminus = p*p+p_prime*p_prime-p*p_prime;
+K=(mu*mu+Lplus)*(Lminus)/(mu*mu+Lminus)/(Lplus);
+CalI = log(K);
+CalJ = -mu*log(K)+2*sqrt(Lminus)*atan(mu/sqrt(Lminus))-2*sqrt(Lplus)*atan(mu/sqrt(Lplus));
+result = 2*V0/M_PI/p/p_prime*(CalI+CalJ);
+
+return result;
 }
 
 void perform_3() {
     //Parameter: a=0, b=200, n=400;
     double a=0;
     double b=200;
-    double n=400;
-    double step=(b-a)/n;
+    double np=400;
+    double step=(b-a)/np;
     double result;
 
-    for(double p=a; p<b; p+=step) {
-        for (double p_prime =a; p_prime<b; p+=step) {
+    //Loop for n = 10^2, ..., 10^5.
+    for(double ny=1e2, ny<=1e5, ny*=10)
+        //Loop for p
+        for(double p=a; p<b; p+=step) {
+            //Loop for p'
+            for (double p_prime =a; p_prime<b; p+=step) {
             v_mu_l0(p, p_prime);
-        }
+            }
 
-    }
+        }
 
 }
 
