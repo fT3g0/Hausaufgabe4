@@ -1,0 +1,3 @@
+/tmp/ccDHRrcR.o: In function `lambda(double)':
+hausaufgabe4.cpp:(.text+0xd89): undefined reference to `dgeev_(char*, char*, int*, double*, int*, double*, double*, double*, int*, double*, int*, double*, int*, int*)'
+collect2: error: ld returned 1 exit status
