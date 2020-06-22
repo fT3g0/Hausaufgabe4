@@ -404,7 +404,7 @@ double v_mu_l0 (double &p, double &p_prime)
 
     double integral_part, result;
     integral_part = gausslegendre(0,10,x,w,100);
-    result = 2/M_PI*v0*integral_part;
+    result = 2/M_PI*V0*integral_part;
     return result;
  }
 
@@ -421,15 +421,12 @@ void perform_3() {
     double step=(b-a)/n;
     double result;
 
-    for(int p=a; p<b; p+=step) {
-        for (p_prime =a; p_prime<b; p+=step) {
+    for(double p=a; p<b; p+=step) {
+        for (double p_prime =a; p_prime<b; p+=step) {
             v_mu_l0(p, p_prime);
         }
 
     }
-
-
-    maxreldiff;
 
 }
 
@@ -483,5 +480,5 @@ int main() {
     perform_7;
     perform_8;
 
-    return 0
+    return 0;
 }
