@@ -467,9 +467,9 @@ void perform_3() {
                     //numerischen Wert einspeichern um diese vergleichen zu können
             v_num = v_mu_l0(p, p_prime, ny);
             v_ana = v_mu_l0_analytic(p, p_prime);
-            reldiff = abs(2(v_num-v_ana)/(v_num+v_ana)); // berechnet relative Abweichung
+            reldiff = abs(2*(v_num-v_ana)/(v_num+v_ana)); // berechnet relative Abweichung
             if (reldiff>maxreldiff) {
-                    maxreldiff=reldiff      //damit am Ende die maximale relative Abweichung in maxreldiff gespeichert ist
+                    maxreldiff=reldiff;      //damit am Ende die maximale relative Abweichung in maxreldiff gespeichert ist
                     p_mrd = p;
                     p_prime_mrd = p_prime;
                     }
