@@ -428,7 +428,7 @@ double v_mu_l0 (double &p, double &p_prime, double n)
  }
 
 //berechnet die Funktion analytisch
-double v_mu_l0_analytic (double &p, double &p_prime, double &mu)
+double v_mu_l0_analytic (double &p, double &p_prime, double &mu {
 
 //Benennung der Hilfsvariablen K, Lplus, Lminus, CalI und CalJ wie in pdf
 
